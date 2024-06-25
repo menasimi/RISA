@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Event Registration with QR Code</title>
+    <title>Event Registration</title>
     <style>
+        /* Your CSS styles here */
         form {
             max-width: 600px;
             margin: auto;
@@ -12,38 +13,36 @@
             border: 1px solid #ccc;
             border-radius: 1em;
         }
-
         div + div {
             margin-top: 1em;
         }
-
         label {
             display: block;
+            margin-bottom: 0.5em;
         }
-
         input, textarea, select {
             width: 100%;
             padding: 0.5em;
             border: 1px solid #ccc;
-            border-radius: 1em;
+            border-radius: 0.5em;
         }
-
         button {
             padding: 0.7em;
             color: #fff;
             background-color: #007BFF;
             border: none;
-            border-radius: 1em;
+            border-radius: 0.5em;
             cursor: pointer;
         }
-
         button:hover {
             background-color: #0056b3;
         }
-
         .qr-code {
             text-align: center;
             margin-top: 20px;
+        }
+        .confirmation {
+            display: none;
         }
     </style>
 </head>
@@ -104,7 +103,12 @@
         </div>
         <button type="submit">Register</button>
     </form>
-    <div id="qrcode" class="qr-code"></div>
+    <div id="confirmation" class="confirmation">
+        <h3>Thank you for registering!</h3>
+        <p>An email with your registration details and QR code ticket will be sent shortly.</p>
+    </div>
+
+    <div id="qrCodeContainer" class="qr-code"></div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script src="script.js"></script>
