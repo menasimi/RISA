@@ -1,0 +1,12 @@
+name: Deploy to GitHub Pages and Run Server
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name:
