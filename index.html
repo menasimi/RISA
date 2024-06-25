@@ -20,7 +20,7 @@
             display: block;
             margin-bottom: 0.5em;
         }
-        input, select {
+        input, textarea, select {
             width: 100%;
             padding: 0.5em;
             border: 1px solid #ccc;
@@ -43,6 +43,13 @@
         }
         .confirmation {
             display: none;
+            max-width: 600px;
+            margin: auto;
+            padding: 1em;
+            border: 1px solid #ccc;
+            border-radius: 1em;
+            background-color: #f0f0f0;
+            text-align: center;
         }
     </style>
 </head>
@@ -54,22 +61,58 @@
             <input type="text" id="name" name="name" required>
         </div>
         <div>
+            <label for="surname">Surname:</label>
+            <input type="text" id="surname" name="surname" required>
+        </div>
+        <div>
+            <label for="dob">Date of Birth:</label>
+            <input type="date" id="dob" name="dob" required>
+        </div>
+        <div>
             <label for="college">College/University:</label>
             <input type="text" id="college" name="college" required>
+        </div>
+        <div>
+            <label for="course">Course:</label>
+            <input type="text" id="course" name="course" required>
+        </div>
+        <div>
+            <label for="semester">Semester:</label>
+            <input type="number" id="semester" name="semester" required>
+        </div>
+        <div>
+            <label for="country">Country:</label>
+            <input type="text" id="country" name="country" required>
         </div>
         <div>
             <label for="mobile">Mobile No:</label>
             <input type="tel" id="mobile" name="mobile" required>
         </div>
         <div>
-            <label for="country">Country:</label>
-            <input type="text" id="country" name="country" required>
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required>
+        </div>
+        <div>
+            <label for="passport">Upload Passport:</label>
+            <input type="file" id="passport" name="passport" accept="image/*,application/pdf" required>
+        </div>
+        <div>
+            <label for="visa">Upload VISA:</label>
+            <input type="file" id="visa" name="visa" accept="image/*,application/pdf" required>
+        </div>
+        <div>
+            <label for="photo">Upload Recent Photo:</label>
+            <input type="file" id="photo" name="photo" accept="image/*" required>
+        </div>
+        <div>
+            <label for="collegeId">Upload College ID:</label>
+            <input type="file" id="collegeId" name="collegeId" accept="image/*,application/pdf" required>
         </div>
         <button type="submit">Register</button>
     </form>
     <div id="confirmation" class="confirmation">
         <h3>Thank you for registering!</h3>
-        <p>An email with your registration details and QR code ticket has been sent.</p>
+        <p>An email with your registration details and QR code ticket will be sent shortly.</p>
     </div>
 
     <div id="qrCodeContainer" class="qr-code"></div>
