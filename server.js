@@ -24,42 +24,56 @@ const upload = multer({ storage: storage });
 app.use(express.static('public'));
 
 // Handle form submission
-app.post('/submit-form', upload.fields([
-    { name: 'passport', maxCount: 1 },
-    { name: 'visa', maxCount: 1 },
-    { name: 'photo', maxCount: 1 },
-    { name: 'collegeId', maxCount: 1 }
-]), async (req, res) => {
+app.post('/submit-form', upload.none(), async (req, res) => {
     try {
         // Extract form data
-        const { name, surname, dob, college, course, semester, country, mobile, email } = req.body;
+        const { name, college, mobile, country } = req.body;
 
         // Generate QR code data
-        const qrData = `${name} ${surname}\n${college}\n${country}`;
+        const qrData = `Name: ${name}\nCollege: ${college}\nMobile: ${mobile}\nCountry: ${country}`;
+        
+        // Generate QR code as image (base64)
+        const qrImageBase64 = await QRCode.toDataURL(qrData);
 
-        // Create PDF with QR code
-        const canvas = createCanvas(600, 600);
-        const ctx = canvas.getContext('2d');
-        await QRCode.toCanvas(ctx, qrData, { errorCorrectionLevel: 'H' });
+        // Create PDF with QR code and additional details
+        const pdfPath = path.join(__dirname, `tickets/${name}_ticket.pdf`);
+        await generatePDF(pdfPath, name, college, mobile, country, qrImageBase64);
 
-        const pdfBuffer = canvas.toBuffer('application/pdf');
-        const pdfPath = path.join(__dirname, `tickets/${name}_${surname}_ticket.pdf`);
-
-        fs.writeFileSync(pdfPath, pdfBuffer);
-
-        // Send email with PDF attachment
-        await sendEmail(email, pdfPath);
+        // Send confirmation email
+        await sendConfirmationEmail(req.body.email, name, college, mobile, country, pdfPath);
 
         // Respond with success message
         res.status(200).json({ message: 'Registration successful. Email sent with QR code ticket.', qrData: qrData });
     } catch (error) {
-        console.error(error);
+        console.error('Error:', error);
         res.status(500).json({ message: 'Error processing registration.' });
     }
 });
 
-// Function to send email with PDF attachment
-async function sendEmail(email, pdfPath) {
+// Function to generate PDF with QR code and details
+async function generatePDF(pdfPath, name, college, mobile, country, qrImageBase64) {
+    const canvas = createCanvas(600, 400);
+    const ctx = canvas.getContext('2d');
+    
+    // Draw QR code
+    const qrImage = new Image();
+    qrImage.src = qrImageBase64;
+    ctx.drawImage(qrImage, 50, 50, 200, 200);
+
+    // Draw text
+    ctx.font = '20px Arial';
+    ctx.fillText(`Name: ${name}`, 300, 100);
+    ctx.fillText(`College: ${college}`, 300, 150);
+    ctx.fillText(`Mobile: ${mobile}`, 300, 200);
+    ctx.fillText(`Country: ${country}`, 300, 250);
+
+    // Convert to PDF buffer and write to file
+    const pdfBuffer = canvas.toBuffer('application/pdf');
+    fs.writeFileSync(pdfPath, pdfBuffer);
+}
+
+// Function to send confirmation email with PDF attachment
+async function sendConfirmationEmail(email, name, college, mobile, country, pdfPath) {
     const transporter = nodemailer.createTransport({
         service: 'gmail',
         auth: {
@@ -72,10 +86,10 @@ async function sendEmail(email, pdfPath) {
         from: 'your-email@gmail.com',
         to: email,
         subject: 'Event Registration Confirmation',
-        text: 'Thank you for registering! Please find your QR code ticket attached.',
+        text: `Dear ${name},\n\nThank you for registering! Please find your QR code ticket attached.\n\nBest regards,\nEvent Team`,
         attachments: [
             {
-                filename: 'ticket.pdf',
+                filename: `${name}_ticket.pdf`,
                 path: pdfPath,
                 contentType: 'application/pdf'
             }
